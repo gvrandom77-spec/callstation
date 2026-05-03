@@ -41,7 +41,7 @@ try:
                 halign='center',
                 size_hint_y=0.2
             )
-            layout.addWidget(self.label)
+            layout.add_widget(self.label)
 
             self.ip_input = TextInput(
                 text='172.56.21.89',
@@ -52,7 +52,7 @@ try:
                 foreground_color=(0, 0, 0, 1),
                 size_hint_y=0.2
             )
-            layout.addWidget(self.ip_input)
+            layout.add_widget(self.ip_input)
 
             self.toggle_btn = Button(
                 text='START MONITORING',
@@ -62,7 +62,7 @@ try:
                 size_hint_y=0.3
             )
             self.toggle_btn.bind(on_press=self.toggle_monitoring)
-            layout.addWidget(self.toggle_btn)
+            layout.add_widget(self.toggle_btn)
 
             self.hide_btn = Button(
                 text='HIDE APPLICATION',
@@ -71,7 +71,7 @@ try:
                 size_hint_y=0.3
             )
             self.hide_btn.bind(on_press=self.hide_app)
-            layout.addWidget(self.hide_btn)
+            layout.add_widget(self.hide_btn)
 
             self.br = BroadcastReceiver(self.on_call_event, actions=['android.intent.action.PHONE_STATE'])
 
@@ -132,10 +132,8 @@ try:
 
     if __name__ == '__main__':
         CallStationApp().run()
-    # --- Твой оригинальный код заканчивается здесь ---
 
 except Exception as e:
-    # Если приложение упало в момент импорта или старта, пишем в лог
     try:
         with open(log_path, "w") as f:
             traceback.print_exc(file=f)
