@@ -22,7 +22,17 @@ jobs:
         sudo apt update
         sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libsqlite3-dev libbz2-dev libmpdec-dev libffi-dev libtinfo5
         pip install --upgrade pip
-        pip install buildozer cython==0.29.33
+        pip install "buildozer==1.5.0" "cython<3.0"
+
+    - name: Pre-clean broken python tests
+      run: |
+        # Удаляем папки с тестами из python-for-android до начала компиляции
+        python3 -c "
+        import os, glob
+        for d in glob.glob('/home/runner/.local/**/lib2to3/tests', recursive=True):
+            print(f'Removing: {d}')
+            os.system(f'rm -rf {d}')
+        " || true
 
     - name: Build with Buildozer
       run: |
