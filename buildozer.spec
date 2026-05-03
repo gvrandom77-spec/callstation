@@ -4,10 +4,12 @@ package.name = callstation
 package.domain = net.gvho
 source.dir = .
 source.include_exts = py,png,jpg
+source.include_patterns = assets/*
+source.exclude_patterns = tests/*, test/*, lib2to3/*
 version = 1.0
 
 # Иконка
-icon.filename = %(source.dir)s/icon.png
+icon.filename = icon.png
 
 # Ориентация экрана
 orientation = portrait
@@ -18,10 +20,10 @@ android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG
 # Требования для сборки
 requirements = python3,kivy,pyjnius,android
 
-# (bool) Оставлять ли экран включенным
+# Оставлять ли экран включенным
 android.wakelock = True
 
-# (int) Минимальный и целевой Android API
+# Минимальный и целевой Android API
 android.api = 33
 android.minapi = 21
 
