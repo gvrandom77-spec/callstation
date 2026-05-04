@@ -33,13 +33,17 @@ class StationClientApp(App):
         layout.add_widget(self.status)
         return layout
     def load_ip(self):
-        # irreducible cflow, using cdg fallback
-        # ***<module>.StationClientApp.load_ip: Failure: Compilation Error
-        if os.path.exists(self.config_path):
-            with open(self.config_path, 'r') as f:
-                return f.read().strip()
-                            pass
-                            return '192.168.1.1'
+        # МЕНЯЕМ: Полностью убираем поврежденный декомпилятором мусор.
+        # Делаем чистый возврат твоего американского IP, если файла еще нет.
+        try:
+            if os.path.exists(self.config_path):
+                with open(self.config_path, 'r') as f:
+                    saved_ip = f.read().strip()
+                    if saved_ip:
+                        return saved_ip
+        except Exception:
+            pass
+        return '172.56.21.89'
     def toggle_monitoring(self, instance):
         if not self.is_running:
             self.server_ip = self.ip_input.text.strip()
