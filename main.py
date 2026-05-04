@@ -29,53 +29,43 @@ try:
             self.server_ip = self.load_ip()
             self.is_running = False
 
+            # Твой оригинальный layout
             layout = BoxLayout(orientation='vertical', padding=30, spacing=15)
 
-            # Текст строго на английском языке
+            # Текст инструкции на английском
             instruction = (
                 "Enter the computer's [b]IPv4 address[/b].\n"
                 "You can find the address using the [color=#33cc33]ipconfig[/color] command."
             )
-            self.lbl_instruction = Label(
-                text=instruction, 
-                markup=True, 
-                halign='center', 
-                valign='middle',
-                font_size='18sp',
-                size_hint_y=None,
-                height='80dp'
-            )
-            # Фикс переноса текста под размер экрана
-            self.lbl_instruction.bind(size=lambda s, w: s.setter('text_size')(s, (w[0], None)))
-            layout.add_widget(self.lbl_instruction)
+            layout.add_widget(Label(text=instruction, markup=True, halign='center', font_size='18sp'))
 
-            # Ввод IP: правильный американский адрес по умолчанию
+            # Поле ввода IP — строго твои оригинальные размеры и высота 80
             self.ip_input = TextInput(
                 text=self.server_ip, 
                 multiline=False, 
                 font_size='22sp', 
                 size_hint_y=None, 
-                height='65dp',
-                padding=[15, 15, 15, 15]
+                height=80, 
+                halign='center'
             )
             layout.add_widget(self.ip_input)
 
-            # Кнопка START MONITORING
+            # Кнопка запуска — высота 100
             self.btn_toggle = Button(
                 text='START MONITORING', 
                 size_hint_y=None, 
-                height='75dp', 
+                height=100, 
                 background_color=get_color_from_hex('#2E7D32'), 
                 background_normal=''
             )
             self.btn_toggle.bind(on_press=self.toggle_monitoring)
             layout.add_widget(self.btn_toggle)
 
-            # Кнопка HIDE APPLICATION
+            # Кнопка скрытия — высота 80
             btn_hide = Button(
                 text='HIDE APPLICATION', 
                 size_hint_y=None, 
-                height='65dp', 
+                height=80, 
                 background_color=get_color_from_hex('#455A64'), 
                 background_normal=''
             )
@@ -83,17 +73,13 @@ try:
             layout.add_widget(btn_hide)
 
             # Статус
-            self.status = Label(
-                text='Status: Stopped', 
-                color=(0.7, 0.7, 0.7, 1),
-                size_hint_y=None,
-                height='40dp'
-            )
+            self.status = Label(text='Status: Stopped', color=(0.7, 0.7, 0.7, 1))
             layout.add_widget(self.status)
 
             return layout
 
         def load_ip(self):
+            # Аккуратный фикс для безопасного чтения файла конфигурации
             try:
                 if os.path.exists(self.config_path):
                     with open(self.config_path, 'r') as f:
