@@ -8,26 +8,24 @@ from kivy.utils import get_color_from_hex
 from kivy.core.window import Window
 import socket
 import os
+
+# Безопасный импорт компонентов Android
+from android.permissions import request_permissions, Permission
 from android.broadcast import BroadcastReceiver
 
 class StationClientApp(App):
     def build(self):
         self.config_path = os.path.join(App().user_data_dir, 'ip_config.txt')
-        
-        
         self.server_ip = self.load_ip()
         self.is_running = False
         
         layout = BoxLayout(orientation='vertical', padding=30, spacing=15)
         
-        
         instruction = "Enter the computer's [b]IPv4 address[/b].\nYou can find the address using the\n[color=#33cc33]ipconfig[/color]"
         layout.add_widget(Label(text=instruction, markup=True, halign='center', font_size='20sp'))
         
-        
         self.ip_input = TextInput(text=self.server_ip, multiline=False, font_size='22sp', size_hint_y=None, height=80, halign='center')
         layout.add_widget(self.ip_input)
-        
         
         self.btn_toggle = Button(
             text='START MONITORING', 
@@ -40,7 +38,6 @@ class StationClientApp(App):
         self.btn_toggle.bind(on_press=self.toggle_monitoring)
         layout.add_widget(self.btn_toggle)
         
-        
         btn_hide = Button(text='HIDE APPLICATION', size_hint_y=None, height=90, background_color=get_color_from_hex('#455A64'), background_normal='', font_size='22sp')
         btn_hide.bind(on_press=self.hide_app)
         layout.add_widget(btn_hide)
@@ -52,9 +49,16 @@ class StationClientApp(App):
         )
         layout.add_widget(self.status)
         return layout
+
+    def on_start(self):
+        # Запрашиваем права, необходимые для Android 11, 12 и 13
+        # Начиная с Android 11, READ_CALL_LOG критически важен для получения номера!
+        request_permissions([
+            Permission.READ_PHONE_STATE,
+            Permission.READ_CALL_LOG
+        ])
     
     def load_ip(self):
-        
         try:
             if os.path.exists(self.config_path):
                 with open(self.config_path, 'r') as f:
@@ -84,7 +88,6 @@ class StationClientApp(App):
             self.is_running = False
             self.server_ip = self.ip_input.text.strip()
             
-            
             try:
                 with open(self.config_path, 'w') as f:
                     f.write(f"{self.server_ip},0")
@@ -102,6 +105,7 @@ class StationClientApp(App):
         PythonActivity.mActivity.moveTaskToBack(True)
 
     def start_broadcast(self):
+        # Перестраховываемся и регистрируем ресивер для PHONE_STATE
         self.br = BroadcastReceiver(self.on_call_event, actions=['android.intent.action.PHONE_STATE'])
         self.br.start()
 
@@ -110,7 +114,6 @@ class StationClientApp(App):
             self.br.stop()
 
     def on_call_event(self, context, intent):
-        
         is_active = False
         saved_ip = self.server_ip
         try:
@@ -124,14 +127,27 @@ class StationClientApp(App):
         except Exception:
             pass
 
-        
         if not is_active:
             return
 
         state = intent.getStringExtra('state')
-        number = intent.getStringExtra('incoming_number') or 'Unknown number'
-        if state == 'RINGING':
+        
+        # На Android 11/12/13 из-за безопасности номер может лежать в разных extra ключах.
+        # Проверяем основной ключ и альтернативный (иногда система дублирует его)
+        number = intent.getStringExtra('incoming_number')
+        
+        from jnius import autoclass
+        TelephonyManager = autoclass('android.telephony.TelephonyManager')
+        
+        # Если состояние звонка RINGING
+        if state == TelephonyManager.EXTRA_STATE_RINGING or state == 'RINGING':
+            if not number:
+                # Попытка вытащить номер из данных самого интента, если основной ключ пустой
+                number = intent.getStringExtra('android.intent.extra.PHONE_NUMBER')
             
+            if not number:
+                number = 'Unknown'
+                
             self.send_signal_to_ip(f'InCall:{number}', saved_ip)
 
     def send_signal_to_ip(self, message, ip_to_send):
@@ -141,7 +157,7 @@ class StationClientApp(App):
             s.connect((ip_to_send, 5555))
             s.sendall(message.encode('utf-8'))
             s.close()
-        except:
+        except Exception:
             pass
 
 if __name__ == '__main__':
