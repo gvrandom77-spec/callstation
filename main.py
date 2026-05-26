@@ -9,7 +9,7 @@ from kivy.core.window import Window
 import socket
 import os
 
-# Безопасный импорт компонентов Android
+
 from android.permissions import request_permissions, Permission
 from android.broadcast import BroadcastReceiver
 
@@ -51,8 +51,7 @@ class StationClientApp(App):
         return layout
 
     def on_start(self):
-        # Запрашиваем права, необходимые для Android 11, 12 и 13
-        # Начиная с Android 11, READ_CALL_LOG критически важен для получения номера!
+        
         request_permissions([
             Permission.READ_PHONE_STATE,
             Permission.READ_CALL_LOG
@@ -105,7 +104,7 @@ class StationClientApp(App):
         PythonActivity.mActivity.moveTaskToBack(True)
 
     def start_broadcast(self):
-        # Перестраховываемся и регистрируем ресивер для PHONE_STATE
+        
         self.br = BroadcastReceiver(self.on_call_event, actions=['android.intent.action.PHONE_STATE'])
         self.br.start()
 
@@ -132,17 +131,16 @@ class StationClientApp(App):
 
         state = intent.getStringExtra('state')
         
-        # На Android 11/12/13 из-за безопасности номер может лежать в разных extra ключах.
-        # Проверяем основной ключ и альтернативный (иногда система дублирует его)
+        
         number = intent.getStringExtra('incoming_number')
         
         from jnius import autoclass
         TelephonyManager = autoclass('android.telephony.TelephonyManager')
         
-        # Если состояние звонка RINGING
+        
         if state == TelephonyManager.EXTRA_STATE_RINGING or state == 'RINGING':
             if not number:
-                # Попытка вытащить номер из данных самого интента, если основной ключ пустой
+                
                 number = intent.getStringExtra('android.intent.extra.PHONE_NUMBER')
             
             if not number:
