@@ -15,7 +15,7 @@ icon.filename = icon.png
 orientation = portrait
 
 # Разрешения (Добавили работу с памятью)
-android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG, FOREGROUND_SERVICE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
 # Требования для сборки
 requirements = python3,kivy,pyjnius,android
