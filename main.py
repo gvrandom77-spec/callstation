@@ -113,6 +113,7 @@ class StationClientApp(App):
             self.br.stop()
 
     def on_call_event(self, context, intent):
+        from jnius import autoclass
         is_active = False
         saved_ip = self.server_ip
         try:
