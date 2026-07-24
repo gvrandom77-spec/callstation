@@ -6,6 +6,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.core.window import Window
+from kivy.clock import Clock
 import socket
 import os
 
@@ -51,7 +52,6 @@ class StationClientApp(App):
         return layout
 
     def on_start(self):
-        
         request_permissions([
             Permission.READ_PHONE_STATE,
             Permission.READ_CALL_LOG
@@ -83,6 +83,9 @@ class StationClientApp(App):
             self.btn_toggle.background_color = get_color_from_hex('#C62828')
             self.status.text = f'Monitoring calls (IP: {self.server_ip})'
             self.start_broadcast()
+            
+            # ЗАПУСКАЕМ ОТПРАВКУ ПИНГА КАЖДЫЕ 3 СЕКУНДЫ
+            Clock.schedule_interval(self.send_ping_interval, 3.0)
         else:
             self.is_running = False
             self.server_ip = self.ip_input.text.strip()
@@ -97,6 +100,9 @@ class StationClientApp(App):
             self.btn_toggle.background_color = get_color_from_hex('#2E7D32')
             self.status.text = 'Status: Stopped'
             self.stop_broadcast()
+            
+            # ОСТАНАВЛИВАЕМ ПИНГ
+            Clock.unschedule(self.send_ping_interval)
 
     def hide_app(self, instance):
         from jnius import autoclass
@@ -104,13 +110,26 @@ class StationClientApp(App):
         PythonActivity.mActivity.moveTaskToBack(True)
 
     def start_broadcast(self):
-        
         self.br = BroadcastReceiver(self.on_call_event, actions=['android.intent.action.PHONE_STATE'])
         self.br.start()
 
     def stop_broadcast(self):
         if hasattr(self, 'br'):
             self.br.stop()
+
+    def send_ping_interval(self, dt):
+        if not self.is_running:
+            return
+        try:
+            target_ip = self.server_ip
+            if target_ip and target_ip != '11.11.11.11':
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(1)
+                s.connect((target_ip, 5555))
+                s.sendall(b'PING')
+                s.close()
+        except Exception:
+            pass
 
     def on_call_event(self, context, intent):
         from jnius import autoclass
@@ -131,17 +150,13 @@ class StationClientApp(App):
             return
 
         state = intent.getStringExtra('state')
-        
-        
         number = intent.getStringExtra('incoming_number')
         
         from jnius import autoclass
         TelephonyManager = autoclass('android.telephony.TelephonyManager')
         
-        
         if state == TelephonyManager.EXTRA_STATE_RINGING or state == 'RINGING':
             if not number:
-                
                 number = intent.getStringExtra('android.intent.extra.PHONE_NUMBER')
             
             if not number:
