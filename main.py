@@ -22,7 +22,7 @@ class StationClientApp(App):
         
         layout = BoxLayout(orientation='vertical', padding=30, spacing=15)
         
-        instruction = "Enter the computer's [b]IPv4 address[/b].\nWIN+R -> cmd ->\n[color=#33cc33]ipconfig[/color]"
+        #instruction = "Enter the computer's [b]IPv4 address[/b].\nWIN+R -> cmd ->\n[color=#33cc33]ipconfig[/color]"
         layout.add_widget(Label(text=instruction, markup=True, halign='center', font_size='20sp'))
         
         self.ip_input = TextInput(text=self.server_ip, multiline=False, font_size='22sp', size_hint_y=None, height=80, halign='center')
