@@ -15,7 +15,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Fix pip version to avoid internal error
       run: pip install --upgrade "pip<24.1"
@@ -30,7 +30,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libsqlite3-dev libbz2-dev libmpdec-dev libffi-dev libtinfo5
-        pip install "buildozer==1.5.0" "cython<3.0"
+        pip install --upgrade buildozer cython<3.0
 
     - name: Pre-clean broken python tests
       run: |
