@@ -27,6 +27,8 @@ android.wakelock = True
 android.api = 33
 android.minapi = 21
 
+# Comment
+
 [buildozer]
 log_level = 2
 warn_on_root = 1
