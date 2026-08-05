@@ -43,7 +43,12 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        yes | buildozer android debug || (echo "=== BUILD FAILED, LAST 100 LINES OF LOG ===" && tail -n 100 .buildozer/android/platform/build-arm64-v8a/dists/callstation/p4a_out.log || true)
+        yes | buildozer android debug
+
+    - name: Check bin folder contents
+      run: |
+        echo "Checking bin/ folder:"
+        ls -la bin/ || echo "bin folder missing"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
