@@ -34,8 +34,7 @@ orientation = portrait
 android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG, FOREGROUND_SERVICE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
 # (list) Application requirements
-# Добавили pip<24.1 прямо в зависимости, чтобы обойти баг со сборкой
-requirements = python3,kivy,pyjnius,android,pip<24.1
+requirements = python3,kivy,pyjnius,android
 
 # (bool) Indicate if the application should be steady
 android.wakelock = True
