@@ -26,17 +26,24 @@ jobs:
 
     - name: Install system dependencies
       run: |
-        sudo apt update || exit 1
-        sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libsqlite3-dev libbz2-dev libmpdec-dev libffi-dev libtinfo5 build-essential ccache || exit 1
+        sudo apt update
+        sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libsqlite3-dev libbz2-dev libmpdec-dev libffi-dev libtinfo5 build-essential ccache
 
     - name: Install Buildozer and Cython
       run: |
-        pip install --upgrade pip || exit 1
-        pip install --upgrade buildozer "cython<3.0" || exit 1
+        pip install --upgrade pip
+        pip install --upgrade buildozer "cython<3.0"
 
     - name: Run Buildozer
       run: |
-        buildozer --debug android debug || exit 1
+        buildozer android debug > build_log.txt 2>&1 || (cat build_log.txt && exit 1)
+
+    - name: Save Log on Failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: error-log
+        path: build_log.txt
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
