@@ -34,16 +34,17 @@ jobs:
         pip install --upgrade pip
         pip install --upgrade buildozer "cython<3.0"
 
+    - name: Accept Android SDK Licenses Automatically
+      run: |
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n24333f8a43b6892576350930f862ae8b6903bb2a" > /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        echo -e "\n50466719950c490bac08224ab91d099bfbd3210d" >> /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\ne9ac5f9919b9a13b4dba4c87fae8785fc96b3578" >> /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+
     - name: Run Buildozer
       run: |
-        buildozer android debug > build_log.txt 2>&1 || (cat build_log.txt && exit 1)
-
-    - name: Save Log on Failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: error-log
-        path: build_log.txt
+        buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
