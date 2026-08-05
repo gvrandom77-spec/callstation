@@ -45,6 +45,12 @@ android.api = 33
 # (int) Minimum API required
 android.minapi = 21
 
+# (str) Android SDK version to use
+android.sdk = 33
+
+# (str) Android NDK version to use
+android.ndk = 25b
+
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug)
