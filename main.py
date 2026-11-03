@@ -128,8 +128,8 @@ class StationClientApp(App):
                 s.connect((target_ip, 5555))
                 s.sendall(b'PING')
                 s.close()
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"PING error: {e}")
 
     def on_call_event(self, context, intent):
         from jnius import autoclass
@@ -174,7 +174,16 @@ class StationClientApp(App):
         except Exception:
             pass
 
+    def stop_all(self):
+        self.is_running = False
+        self.stop_broadcast()
+        try:
+            Clock.unschedule(self.send_ping_interval)
+        except Exception:
+            pass
+
+    def on_stop(self):
+        self.stop_all()
+
 if __name__ == '__main__':
     StationClientApp().run()
-
-# restart build
