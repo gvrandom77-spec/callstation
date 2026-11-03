@@ -9,7 +9,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 import socket
 import os
-
+ 
 
 from android.permissions import request_permissions, Permission
 from android.broadcast import BroadcastReceiver
