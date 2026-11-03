@@ -14,7 +14,7 @@ android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG, FOREGROUND_SERV
 requirements = python3,kivy,pyjnius,android
 android.wakelock = True
 
-android.api = 33
+android.api = 34
 android.minapi = 21
 # android.sdk = 33
 android.ndk = 25b
