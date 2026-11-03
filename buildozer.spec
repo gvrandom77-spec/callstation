@@ -16,7 +16,7 @@ android.wakelock = True
 
 android.api = 33
 android.minapi = 21
-android.sdk = 33
+# android.sdk = 33
 android.ndk = 25b
 
 [buildozer]
