@@ -11,38 +11,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Build with Buildozer
+      uses: kivy/buildozer-action@v1
       with:
-        python-version: '3.10'
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Install system dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libsqlite3-dev libbz2-dev libmpdec-dev libffi-dev libtinfo5 build-essential ccache
-
-    - name: Install Buildozer and Cython
-      run: |
-        pip install --upgrade pip
-        pip install --upgrade buildozer "cython<3.0"
-
-    - name: Accept Android SDK Licenses Automatically
-      run: |
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n24333f8a43b6892576350930f862ae8b6903bb2a" > /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-        echo -e "\n50466719950c490bac08224ab91d099bfbd3210d" >> /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\ne9ac5f9919b9a13b4dba4c87fae8785fc96b3578" >> /home/runner/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-
-    - name: Run Buildozer
-      run: |
-        buildozer --debug android debug
+        filename: buildozer.spec
+        release: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
