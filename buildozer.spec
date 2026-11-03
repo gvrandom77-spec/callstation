@@ -14,10 +14,12 @@ android.permissions = INTERNET, READ_PHONE_STATE, READ_CALL_LOG, FOREGROUND_SERV
 requirements = python3,kivy,pyjnius,android
 android.wakelock = True
 
+# Версии Android SDK / API
 android.api = 34
 android.minapi = 21
 # android.sdk = 33
 android.ndk = 25b
+android.build_tools_version = 34.0.0
 
 [buildozer]
 log_level = 2
